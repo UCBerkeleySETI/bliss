@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
     int nchan_per_coarse=0;
     bliss::hit_search_options hit_search_options{.method = bliss::hit_search_methods::CONNECTED_COMPONENTS, .snr_threshold = 10.0f, .neighbor_l1_dist=7};
     bliss::filter_options hit_filter_options{.filter_zero_drift = true,
-                .filter_sigmaclip = false, .minimum_percent_sigmaclip = 0.1,
+                .filter_sigmaclip = true, .minimum_percent_sigmaclip = 0.1,
                 .filter_high_sk = false, .minimum_percent_high_sk = 0.1,
                 .filter_low_sk = false, .maximum_percent_low_sk = 0.1};
     std::string output_path = "";
@@ -78,9 +78,9 @@ int main(int argc, char *argv[]) {
 
             // Preprocessing
             (clipp::option("-e", "--equalizer-channel") & clipp::value("channel_taps").set(channel_taps_path)) % "the path to coarse channel response at fine frequency resolution",
-            (clipp::option("--validate-pfb") & clipp::value("channel_taps").set(validate_pfb_response)) % fmt::format("whether to validate the coarse channel has a similar PFB response to the given response (default: {})", validate_pfb_response),
-            (clipp::option("--excise-dc") .set(dedrift_options.desmear, true) |
-             clipp::option("--noexcise-dc").set(dedrift_options.desmear, false)) % fmt::format("Excise DC offset from the data (default: {})", excise_dc),
+            clipp::option("--validate-pfb").set(validate_pfb_response, true) % fmt::format("whether to validate the coarse channel has a similar PFB response to the given response (default: {})", validate_pfb_response),
+            (clipp::option("--excise-dc") .set(excise_dc, true) |
+             clipp::option("--noexcise-dc").set(excise_dc, false)) % fmt::format("Excise DC offset from the data (default: {})", excise_dc),
 
             // Compute device / params
             (clipp::option("-d", "--device") & clipp::value("device").set(device)) % fmt::format("Compute device to use (default: {})", device),
@@ -198,9 +198,11 @@ int main(int argc, char *argv[]) {
     pipeline_object.set_device(device);
 
     pipeline_object = bliss::normalize(pipeline_object);
-    pipeline_object = bliss::excise_dc(pipeline_object);
+    if (excise_dc) {
+        pipeline_object = bliss::excise_dc(pipeline_object);
+    }
     if (!channel_taps_path.empty()) {
-        pipeline_object = bliss::equalize_passband_filter(pipeline_object, channel_taps_path, bland::ndarray::datatype::float32, true);
+        pipeline_object = bliss::equalize_passband_filter(pipeline_object, channel_taps_path, bland::ndarray::datatype::float32, validate_pfb_response);
     } else {
         pipeline_object = bliss::flag_filter_rolloff(pipeline_object, flag_options.filter_rolloff);
     }

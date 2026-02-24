@@ -25,7 +25,7 @@ namespace bliss {
 /**
  * write hits as a .dat file similar to turboseti at the given path
 */
-void write_scan_hits_to_dat_file(scan scan_with_hits, std::string_view file_path);
+void write_scan_hits_to_dat_file(scan scan_with_hits, std::string_view file_path, double max_drift_rate=0.0);
 
 /**
  * read serialized hits from file as written by `write_hits_to_file` using given or assumed format

@@ -239,9 +239,30 @@ int main(int argc, char *argv[]) {
                     fmt::print("{}\n", h.repr());
                 }
             } else {
-                bliss::write_scan_hits_to_file(sc, output_path, output_format);
+                // Fix for "double-loop" bug: Pre-calculate the exact physical max drift rate based on scan geometry
+                // (mirroring logic in integrate_drifts.cpp). Passing this explicit value prevents the writer 
+                // from triggering a redundant and expensive re-computation of the pipeline.
+                // Includes 6-decimal rounding to maintain binary compatibility with legacy file headers.
+                
+                double tsamp = sc.tsamp();
+                int time_steps = sc.ntsteps();
+                double foff_Hz = std::abs(sc.foff()) * 1e6; 
+
+                double unit_drift_resolution = foff_Hz / ((time_steps - 1) * tsamp);
+
+                double rounded_low = std::round(dedrift_options.low_rate_Hz_per_sec / unit_drift_resolution) * unit_drift_resolution;
+                double rounded_high = std::round(dedrift_options.high_rate_Hz_per_sec / unit_drift_resolution) * unit_drift_resolution;
+
+                double search_step = unit_drift_resolution * dedrift_options.resolution;
+                
+                long number_drifts = std::lround(std::abs(rounded_high - rounded_low) / std::abs(search_step));
+                double precise_max_drift = rounded_low + (number_drifts - 1) * std::abs(search_step);
+                
+                double final_max_drift = std::round(precise_max_drift * 1e7) / 1e7;
+
+                bliss::write_scan_hits_to_file(sc, output_path, output_format, final_max_drift);
+                  }
             }
-        }
     // } catch (std::exception &e) {
     //     fmt::print("ERROR: got a fatal exception ({}) while running pipeline. This is likely due to running out of "
     //                "memory. Ending processing.\n",

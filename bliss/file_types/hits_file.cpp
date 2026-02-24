@@ -49,7 +49,7 @@ std::list<hit> bliss::read_hits_from_file(std::string_view file_path, std::strin
     }
 }
 
-void bliss::write_scan_hits_to_file(scan scan_with_hits, std::string_view file_path, std::string format) {
+void bliss::write_scan_hits_to_file(scan scan_with_hits, std::string_view file_path, std::string format, double max_drift_rate) {
     if (format.empty()) {
         if (ends_with(file_path, ".dat")) {
             format = "dat";
@@ -60,7 +60,7 @@ void bliss::write_scan_hits_to_file(scan scan_with_hits, std::string_view file_p
 
     // TODO: decide and canonicalize a good default after talking with more users
     if (format == "dat") {
-        write_scan_hits_to_dat_file(scan_with_hits, file_path);
+        write_scan_hits_to_dat_file(scan_with_hits, file_path, max_drift_rate);
     } else if (format == "capnp") {
         write_scan_hits_to_capnp_file(scan_with_hits, file_path);
     } else {
@@ -80,4 +80,3 @@ scan bliss::read_scan_hits_from_file(std::string_view file_path, std::string for
         throw std::invalid_argument("Unknown file format to read_scan_hits_from_file");
     }
 }
-

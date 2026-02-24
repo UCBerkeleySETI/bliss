@@ -83,16 +83,14 @@ std::string format_hits_to_dat_list(Container hits) {
 
 // }
 
-void bliss::write_scan_hits_to_dat_file(scan scan_with_hits, std::string_view file_path) {
+void bliss::write_scan_hits_to_dat_file(scan scan_with_hits, std::string_view file_path, double max_drift_rate) {
     auto output_file = detail::raii_file_for_write(file_path);
 
     auto hits = scan_with_hits.hits();
-    auto number_hits = hits.size();
-
+    
     auto raj = scan_with_hits.src_raj();
     auto dej = scan_with_hits.src_dej();
     auto tstart = scan_with_hits.tstart();
-    auto drift_range = scan_with_hits.get_drift_range();
 
     std::string file_path_id{"n/a"};
     try {
@@ -129,12 +127,13 @@ void bliss::write_scan_hits_to_dat_file(scan scan_with_hits, std::string_view fi
                         formatted_dej,
                         scan_with_hits.tsamp(),
                         scan_with_hits.foff()*1e6,
-                        drift_range.second,
+                        max_drift_rate, 
                         scan_with_hits.ntsteps()*scan_with_hits.tsamp());
     write(output_file._fd, header.c_str(), header.size());
     auto table_contents = format_hits_to_dat_list(hits);
     write(output_file._fd, table_contents.c_str(), table_contents.size());
 }
+
 
 scan bliss::read_scan_hits_from_dat_file(std::string_view file_path) {
     auto in_file = detail::raii_file_for_read(file_path);

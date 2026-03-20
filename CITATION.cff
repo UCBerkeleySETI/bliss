@@ -1,0 +1,9 @@
+cff-version: 1.1.0
+message: "This is the last version of bliss from original author @n-west from which the current repository forked. Development of bliss has since been taken over by the Berkeley SETI Research Center and the SETI Institute. Please cite Nathan West as the sole author and contributor of this codebase if citing analysis conducted from this archived release"
+authors:
+- family-names: West
+  given-names: Nathan
+orcid: https://orcid.org/0000-0003-4198-1629
+title:UCBerkeleySETI/bliss: Breakthrough Listen Interesting Signal Search
+version: 2025-05-22
+date-released: 2026-03-20

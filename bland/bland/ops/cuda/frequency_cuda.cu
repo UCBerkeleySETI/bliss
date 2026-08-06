@@ -8,6 +8,7 @@
 #include <complex>
 
 #include <cufft.h>
+#include <thrust/iterator/reverse_iterator.h>
 #include <thrust/reverse.h>
 #include <thrust/transform.h>
 

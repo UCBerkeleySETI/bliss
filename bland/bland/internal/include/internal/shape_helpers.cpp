@@ -56,16 +56,10 @@ std::vector<int64_t> bland::compute_broadcast_strides(const std::vector<int64_t>
 }
 
 std::vector<int64_t> bland::compute_broadcast_shape(std::vector<int64_t> shape, std::vector<int64_t> out_shape) {
-    std::vector<int64_t> broadcast_shape(out_shape.size());
-
-    size_t input_shape_index = 0;
-    for (size_t i = 0; i < out_shape.size(); ++i) {
-        if (shape[input_shape_index] == out_shape[i] || shape[input_shape_index] == 1) {
-            broadcast_shape[i] = out_shape[i];
-            input_shape_index += 1;
-        } else {
-            broadcast_shape[i] = 1;
-        }
+    std::vector<int64_t> broadcast_shape(out_shape.size(), 1);
+    int64_t              offset = static_cast<int64_t>(out_shape.size()) - static_cast<int64_t>(shape.size());
+    for (size_t i = 0; i < shape.size(); ++i) {
+        broadcast_shape[i + offset] = shape[i];
     }
 
     return broadcast_shape;

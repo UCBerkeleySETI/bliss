@@ -27,9 +27,9 @@ struct kernel_drift_info {
 };
 
 __global__ void integrate_drifts(float* drift_plane_data,
-                            uint8_t* sigmaclip_data,
-                            uint8_t* low_sk_rfi_data, 
-                            uint8_t* high_sk_rfi_data,
+                            uint32_t* sigmaclip_data,
+                            uint32_t* low_sk_rfi_data,
+                            uint32_t* high_sk_rfi_data,
                             int32_t* drift_plane_shape, int32_t* drift_plane_strides,
                             const float* spectrum_grid_data,
                             const uint8_t* rfi_mask_data,
@@ -51,9 +51,9 @@ __global__ void integrate_drifts(float* drift_plane_data,
             
             int64_t drift_plane_index = drift_index * number_channels + freq_channel;
 
-            uint8_t accumulated_low_sk = 0;
-            uint8_t accumulated_high_sk = 0;
-            uint8_t accumulated_sigmaclip = 0;
+            uint32_t accumulated_low_sk = 0;
+            uint32_t accumulated_high_sk = 0;
+            uint32_t accumulated_sigmaclip = 0;
 
             float accumulated_spectrum = 0;
             int accumulated_bins = 0;
@@ -134,9 +134,9 @@ bliss::integrate_linear_rounded_bins_cuda(bland::ndarray    spectrum_grid,
     bland::ndarray drift_plane({number_drifts, number_channels}, spectrum_grid.dtype(), spectrum_grid.device());
 
     auto rfi_in_drift    = integrated_flags(number_drifts, number_channels, rfi_mask.device());
-    auto sigmaclip_rfi_ptr = rfi_in_drift.sigma_clip.data_ptr<uint8_t>();
-    auto lowsk_rfi_ptr   = rfi_in_drift.low_spectral_kurtosis.data_ptr<uint8_t>();
-    auto highsk_rfi_ptr  = rfi_in_drift.high_spectral_kurtosis.data_ptr<uint8_t>();
+    auto sigmaclip_rfi_ptr = rfi_in_drift.sigma_clip.data_ptr<uint32_t>();
+    auto lowsk_rfi_ptr   = rfi_in_drift.low_spectral_kurtosis.data_ptr<uint32_t>();
+    auto highsk_rfi_ptr  = rfi_in_drift.high_spectral_kurtosis.data_ptr<uint32_t>();
 
     auto sigmaclip_rfi_strides = rfi_in_drift.sigma_clip.strides();
     auto lowsk_rfi_strides = rfi_in_drift.low_spectral_kurtosis.strides();
@@ -182,4 +182,3 @@ bliss::integrate_linear_rounded_bins_cuda(bland::ndarray    spectrum_grid,
     frequency_drift_plane freq_drift(drift_plane, rfi_in_drift, time_steps, drift_rates);
     return freq_drift;
 }
-

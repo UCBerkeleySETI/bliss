@@ -264,9 +264,9 @@ __global__ void merge_labels(
 }
 
 __global__ void collect_protohit_md_kernel(
-    uint8_t* rfi_low_sk,
-    uint8_t* rfi_high_sk,
-    uint8_t* rfi_sigmaclip,
+    uint32_t* rfi_low_sk,
+    uint32_t* rfi_high_sk,
+    uint32_t* rfi_sigmaclip,
     uint32_t *g_labels,
     int32_t number_drifts, int32_t number_channels,
     device_protohit* protohits,
@@ -457,9 +457,9 @@ bliss::find_components_above_threshold_cuda(bland::ndarray                   dop
     dev_protohits.resize(*m_num_maxima);
 
     collect_protohit_md_kernel<<<1, 512>>>(
-        dedrifted_rfi.low_spectral_kurtosis.data_ptr<uint8_t>(),
-        dedrifted_rfi.high_spectral_kurtosis.data_ptr<uint8_t>(),
-        dedrifted_rfi.sigma_clip.data_ptr<uint8_t>(),
+        dedrifted_rfi.low_spectral_kurtosis.data_ptr<uint32_t>(),
+        dedrifted_rfi.high_spectral_kurtosis.data_ptr<uint32_t>(),
+        dedrifted_rfi.sigma_clip.data_ptr<uint32_t>(),
         g_labels,
         number_drifts, number_channels,
         thrust::raw_pointer_cast(dev_protohits.data()),

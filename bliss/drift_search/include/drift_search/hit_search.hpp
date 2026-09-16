@@ -15,7 +15,7 @@
 
 namespace bliss {
 
-using rfi = std::map<flag_values, uint8_t>; // TODO: not so elegant, but OKish?
+using rfi = std::map<flag_values, uint32_t>; // Counts may exceed 255 when desmearing.
 
 
 /**

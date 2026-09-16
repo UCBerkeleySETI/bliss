@@ -32,9 +32,9 @@ bliss::integrate_linear_rounded_bins_cpu(bland::ndarray    spectrum_grid,
     bland::ndarray drift_plane({number_drifts, number_channels}, spectrum_grid.dtype(), spectrum_grid.device());
 
     auto rfi_in_drift    = integrated_flags(number_drifts, number_channels, rfi_mask.device());
-    auto sigma_clip_rfi_ptr = rfi_in_drift.sigma_clip.data_ptr<uint8_t>();
-    auto lowsk_rfi_ptr   = rfi_in_drift.low_spectral_kurtosis.data_ptr<uint8_t>();
-    auto highsk_rfi_ptr  = rfi_in_drift.high_spectral_kurtosis.data_ptr<uint8_t>();
+    auto sigma_clip_rfi_ptr = rfi_in_drift.sigma_clip.data_ptr<uint32_t>();
+    auto lowsk_rfi_ptr   = rfi_in_drift.low_spectral_kurtosis.data_ptr<uint32_t>();
+    auto highsk_rfi_ptr  = rfi_in_drift.high_spectral_kurtosis.data_ptr<uint32_t>();
 
     auto sigma_clip_rfi_strides = rfi_in_drift.sigma_clip.strides();
     auto lowsk_rfi_strides = rfi_in_drift.low_spectral_kurtosis.strides();
@@ -93,7 +93,7 @@ bliss::integrate_linear_rounded_bins_cpu(bland::ndarray    spectrum_grid,
                                 highsk_rfi_ptr[highsk_index] += 1;
                             }
                             highsk_index += highsk_rfi_strides[1];
-                            if (rfi_ptr[rfi_index] & static_cast<uint8_t>(flag_values::filter_rolloff)) {
+                            if (rfi_ptr[rfi_index] & static_cast<uint8_t>(flag_values::sigma_clip)) {
                                 sigma_clip_rfi_ptr[filtrolloff_index] += 1;
                             }
                             filtrolloff_index += sigma_clip_rfi_strides[1];
@@ -142,7 +142,7 @@ bliss::integrate_linear_rounded_bins_cpu(bland::ndarray    spectrum_grid,
                                 highsk_rfi_ptr[highsk_index] += 1;
                             }
                             highsk_index += highsk_rfi_strides[1];
-                            if (rfi_ptr[rfi_index] & static_cast<uint8_t>(flag_values::filter_rolloff)) {
+                            if (rfi_ptr[rfi_index] & static_cast<uint8_t>(flag_values::sigma_clip)) {
                                 sigma_clip_rfi_ptr[sigma_clip_index] += 1;
                             }
                             sigma_clip_index += sigma_clip_rfi_strides[1];

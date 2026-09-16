@@ -7,7 +7,7 @@
 
 namespace bliss {
 
-using rfi = std::map<flag_values, uint8_t>; // TODO: not so elegant, but OKish?
+using rfi = std::map<flag_values, uint32_t>; // Counts may exceed 255 when desmearing.
 
 struct freq_drift_coord {
     int64_t drift_index=0;
@@ -36,9 +36,9 @@ struct device_protohit {
     // freq_drift_coord* locations;
     int binwidth;
     // rfi rfi_counts;
-    uint8_t low_sk_count;
-    uint8_t high_sk_count;
-    uint8_t sigma_clip_count;
+    uint32_t low_sk_count;
+    uint32_t high_sk_count;
+    uint32_t sigma_clip_count;
     // -1 indicates an invalid protohit, 0 indicates valid, > 0 indicates another protohit that is better
     int invalidated_by=-1;
 };

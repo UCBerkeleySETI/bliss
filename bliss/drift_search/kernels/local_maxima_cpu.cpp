@@ -96,11 +96,11 @@ bliss::find_local_maxima_above_threshold_cpu(bland::ndarray                  dop
                     c.desmeared_noise = noise_at_this_drift;
 
                     c.rfi_counts[flag_values::low_spectral_kurtosis] =
-                            dedrifted_rfi.low_spectral_kurtosis.scalarize<uint8_t>({curr_coord.drift_index, curr_coord.frequency_channel});
+                            dedrifted_rfi.low_spectral_kurtosis.scalarize<uint32_t>({curr_coord.drift_index, curr_coord.frequency_channel});
                     c.rfi_counts[flag_values::high_spectral_kurtosis] =
-                            dedrifted_rfi.high_spectral_kurtosis.scalarize<uint8_t>({curr_coord.drift_index, curr_coord.frequency_channel});
+                            dedrifted_rfi.high_spectral_kurtosis.scalarize<uint32_t>({curr_coord.drift_index, curr_coord.frequency_channel});
                     c.rfi_counts[flag_values::sigma_clip] =
-                            dedrifted_rfi.sigma_clip.scalarize<uint8_t>({curr_coord.drift_index, curr_coord.frequency_channel});
+                            dedrifted_rfi.sigma_clip.scalarize<uint32_t>({curr_coord.drift_index, curr_coord.frequency_channel});
                     // c.rfi_counts[flag_values::magnitude] =
                     //         dedrifted_rfi.magnitude.scalarize<uint8_t>(curr_coord);
                     // c.rfi_counts[flag_values::sigma_clip] =
